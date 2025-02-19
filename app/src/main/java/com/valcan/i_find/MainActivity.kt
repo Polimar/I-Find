@@ -3,45 +3,59 @@ package com.valcan.i_find
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.valcan.i_find.ui.armadio.ArmadioScreen
+import com.valcan.i_find.ui.navigation.IFindDestinations
 import com.valcan.i_find.ui.theme.IFindTheme
+import com.valcan.i_find.ui.vestito.VestitoScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             IFindTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                IFindApp()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun IFindApp() {
+    val navController = rememberNavController()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    IFindTheme {
-        Greeting("Android")
+    NavHost(
+        navController = navController,
+        startDestination = IFindDestinations.ARMADI_ROUTE
+    ) {
+        composable(IFindDestinations.ARMADI_ROUTE) {
+            ArmadioScreen(
+                onNavigateToVestiti = { armadioId ->
+                    navController.navigate(
+                        IFindDestinations.vestitiByArmadioRoute(armadioId)
+                    )
+                }
+            )
+        }
+        
+        composable(
+            route = IFindDestinations.VESTITI_BY_ARMADIO_ROUTE,
+            arguments = listOf(
+                navArgument("armadioId") { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val armadioId = backStackEntry.arguments?.getLong("armadioId") ?: return@composable
+            VestitoScreen(
+                armadioId = armadioId,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
     }
 }
