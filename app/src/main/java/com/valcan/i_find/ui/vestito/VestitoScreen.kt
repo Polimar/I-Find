@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.filled.CameraAlt
 import coil.compose.rememberAsyncImagePainter
+import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +33,8 @@ fun VestitoScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showAddDialog by remember { mutableStateOf(false) }
+
+    var editingVestito by remember { mutableStateOf<Vestito?>(null) }
 
     val armadioViewModel: ArmadioViewModel = hiltViewModel()
     val armadioState by armadioViewModel.uiState.collectAsStateWithLifecycle()
@@ -106,44 +109,12 @@ fun VestitoScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(filteredVestiti) { vestito ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = vestito.nome,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = "${vestito.tipo} - ${vestito.colore}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = "Posizione: ${vestito.posizione}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                    VestitoItem(
+                        vestito = vestito,
+                        onEdit = { 
+                            editingVestito = vestito 
                         }
-                        if (vestito.photoUri != null) {
-                            Image(
-                                painter = rememberAsyncImagePainter(vestito.photoUri),
-                                contentDescription = "Thumbnail",
-                                modifier = Modifier
-                                    .size(80.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
+                    )
                 }
             }
         }
@@ -159,36 +130,67 @@ fun VestitoScreen(
             }
         )
     }
+
+    if (editingVestito != null) {
+        EditVestitoDialog(
+            vestito = editingVestito!!,
+            armadi = armadioState.armadi,
+            onDismiss = { editingVestito = null },
+            onConfirm = { updatedVestito ->
+                viewModel.updateVestito(updatedVestito)
+                editingVestito = null
+            }
+        )
+    }
 }
 
 @Composable
-fun VestitoItem(vestito: Vestito) {
+fun VestitoItem(
+    vestito: Vestito,
+    onEdit: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onEdit() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = vestito.nome,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Tipo: ${vestito.tipo}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Colore: ${vestito.colore}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = "Posizione: ${vestito.posizione}",
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = vestito.nome,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Tipo: ${vestito.tipo}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Colore: ${vestito.colore}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Posizione: ${vestito.posizione}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            if (!vestito.photoUri.isNullOrEmpty()) {
+                Image(
+                    painter = rememberAsyncImagePainter(vestito.photoUri),
+                    contentDescription = "Immagine del vestito",
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 } 
