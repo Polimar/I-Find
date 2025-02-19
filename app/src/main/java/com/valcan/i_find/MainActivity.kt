@@ -13,6 +13,7 @@ import com.valcan.i_find.ui.armadio.ArmadioScreen
 import com.valcan.i_find.ui.navigation.IFindDestinations
 import com.valcan.i_find.ui.theme.IFindTheme
 import com.valcan.i_find.ui.vestito.VestitoScreen
+import com.valcan.i_find.ui.home.HomePage
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,14 +34,21 @@ fun IFindApp() {
 
     NavHost(
         navController = navController,
-        startDestination = IFindDestinations.ARMADI_ROUTE
+        startDestination = IFindDestinations.HOME_ROUTE
     ) {
+        composable(IFindDestinations.HOME_ROUTE) {
+            HomePage(
+                onNavigateToAddVestiti = { navController.navigate(IFindDestinations.VESTITI_ROUTE) },
+                onNavigateToAddArmadi = { navController.navigate(IFindDestinations.ARMADI_ROUTE) },
+                onNavigateToSearch = { navController.navigate(IFindDestinations.SEARCH_ROUTE) },
+                onNavigateToSettings = { navController.navigate(IFindDestinations.SETTINGS_ROUTE) }
+            )
+        }
+
         composable(IFindDestinations.ARMADI_ROUTE) {
             ArmadioScreen(
                 onNavigateToVestiti = { armadioId ->
-                    navController.navigate(
-                        IFindDestinations.vestitiByArmadioRoute(armadioId)
-                    )
+                    navController.navigate(IFindDestinations.vestitiByArmadioRoute(armadioId))
                 }
             )
         }
@@ -56,6 +64,15 @@ fun IFindApp() {
                 armadioId = armadioId,
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        // Placeholder per le nuove schermate
+        composable(IFindDestinations.SEARCH_ROUTE) {
+            // TODO: Implementare la schermata di ricerca
+        }
+
+        composable(IFindDestinations.SETTINGS_ROUTE) {
+            // TODO: Implementare la schermata delle impostazioni
         }
     }
 }
