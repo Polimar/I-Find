@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.valcan.i_find.data.model.Vestito
+import com.valcan.i_find.data.model.Armadio
+import com.valcan.i_find.ui.armadio.ArmadioViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,9 +27,16 @@ fun VestitoScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showAddDialog by remember { mutableStateOf(false) }
 
+    val armadioViewModel: ArmadioViewModel = hiltViewModel()
+    val armadioState by armadioViewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(armadioId) {
+        // Se armadioId è -1, ci aspettiamo che il repository restituisca tutti i vestiti
         viewModel.loadVestitiByArmadio(armadioId)
     }
+
+    // Se armadioId == -1 significa "tutti" altrimenti filtra per armadio specifico
+    val filteredVestiti = if (armadioId == -1L) uiState.vestiti else uiState.vestiti.filter { it.armadioId == armadioId }
 
     Scaffold(
         topBar = {
@@ -90,7 +99,7 @@ fun VestitoScreen(
                     .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(uiState.vestiti) { vestito ->
+                items(filteredVestiti) { vestito ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -113,7 +122,7 @@ fun VestitoScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = vestito.posizione,
+                                text = "Posizione: ${vestito.posizione}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -126,9 +135,10 @@ fun VestitoScreen(
 
     if (showAddDialog) {
         AddVestitoDialog(
+            armadi = armadioState.armadi,
             onDismiss = { showAddDialog = false },
-            onConfirm = { nome, tipo, colore, posizione ->
-                viewModel.addVestito(nome, tipo, colore, posizione, armadioId)
+            onConfirm = { nome, tipo, colore, posizione, selectedArmadioId ->
+                viewModel.addVestito(nome, tipo, colore, posizione, selectedArmadioId)
                 showAddDialog = false
             }
         )
@@ -165,65 +175,4 @@ fun VestitoItem(vestito: Vestito) {
             )
         }
     }
-}
-
-@Composable
-fun AddVestitoDialog(
-    onDismiss: () -> Unit,
-    onConfirm: (String, String, String, String) -> Unit
-) {
-    var nome by remember { mutableStateOf("") }
-    var tipo by remember { mutableStateOf("") }
-    var colore by remember { mutableStateOf("") }
-    var posizione by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Aggiungi vestito") },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = nome,
-                    onValueChange = { nome = it },
-                    label = { Text("Nome") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = tipo,
-                    onValueChange = { tipo = it },
-                    label = { Text("Tipo") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = colore,
-                    onValueChange = { colore = it },
-                    label = { Text("Colore") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = posizione,
-                    onValueChange = { posizione = it },
-                    label = { Text("Posizione") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { onConfirm(nome, tipo, colore, posizione) },
-                enabled = nome.isNotBlank() && tipo.isNotBlank() && 
-                         colore.isNotBlank() && posizione.isNotBlank()
-            ) {
-                Text("Conferma")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Annulla")
-            }
-        }
-    )
 } 
