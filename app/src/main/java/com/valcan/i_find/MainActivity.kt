@@ -74,5 +74,13 @@ fun IFindApp() {
         composable(IFindDestinations.SETTINGS_ROUTE) {
             // TODO: Implementare la schermata delle impostazioni
         }
+
+        // Aggiungi questa route per gestire l'aggiunta di vestiti dalla home
+        composable(IFindDestinations.VESTITI_ROUTE) {
+            VestitoScreen(
+                armadioId = -1L,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
     }
 }
