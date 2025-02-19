@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun HomePage(
@@ -25,7 +27,21 @@ fun HomePage(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("I Find") }
+                title = { 
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "I Find",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             )
         }
     ) { padding ->
@@ -33,43 +49,75 @@ fun HomePage(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                HomeIconButton(
-                    icon = Icons.Default.Add,
-                    label = "Aggiungi Vestiti",
-                    onClick = onNavigateToAddVestiti
-                )
-                HomeIconButton(
-                    icon = Icons.Default.Add,
-                    label = "Aggiungi Armadi",
-                    onClick = onNavigateToAddArmadi
-                )
-            }
+            Text(
+                "Cosa mi metto oggi?",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
             
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                HomeIconButton(
-                    icon = Icons.Default.Search,
-                    label = "Cerca",
-                    onClick = onNavigateToSearch
-                )
-                HomeIconButton(
-                    icon = Icons.Default.Settings,
-                    label = "Impostazioni",
-                    onClick = onNavigateToSettings
-                )
-            }
+            GridMenu(
+                onNavigateToAddVestiti = onNavigateToAddVestiti,
+                onNavigateToAddArmadi = onNavigateToAddArmadi,
+                onNavigateToSearch = onNavigateToSearch,
+                onNavigateToSettings = onNavigateToSettings
+            )
+        }
+    }
+}
+
+@Composable
+private fun GridMenu(
+    onNavigateToAddVestiti: () -> Unit,
+    onNavigateToAddArmadi: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToSettings: () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            HomeIconButton(
+                icon = Icons.Default.Add,
+                label = "Aggiungi\nVestiti",
+                onClick = onNavigateToAddVestiti,
+                modifier = Modifier.weight(1f),
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+            HomeIconButton(
+                icon = Icons.Default.Add,
+                label = "Aggiungi\nArmadi",
+                onClick = onNavigateToAddArmadi,
+                modifier = Modifier.weight(1f),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+        }
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            HomeIconButton(
+                icon = Icons.Default.Search,
+                label = "Cerca",
+                onClick = onNavigateToSearch,
+                modifier = Modifier.weight(1f),
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+            )
+            HomeIconButton(
+                icon = Icons.Default.Settings,
+                label = "Impostazioni",
+                onClick = onNavigateToSettings,
+                modifier = Modifier.weight(1f),
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         }
     }
 }
@@ -78,13 +126,22 @@ fun HomePage(
 private fun HomeIconButton(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
     Card(
-        modifier = Modifier
-            .size(140.dp)
+        modifier = modifier
+            .aspectRatio(1f)
             .clip(RoundedCornerShape(24.dp)),
-        onClick = onClick
+        onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp,
+            pressedElevation = 2.dp
+        )
     ) {
         Column(
             modifier = Modifier
@@ -96,12 +153,15 @@ private fun HomeIconButton(
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
