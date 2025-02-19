@@ -49,7 +49,8 @@ fun IFindApp() {
             ArmadioScreen(
                 onNavigateToVestiti = { armadioId ->
                     navController.navigate(IFindDestinations.vestitiByArmadioRoute(armadioId))
-                }
+                },
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         
