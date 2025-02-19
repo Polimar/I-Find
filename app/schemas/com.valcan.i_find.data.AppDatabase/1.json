@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "96ae54569c80b4e2584bb9280b06a77a",
+    "identityHash": "f6b495c6d1e3e40fd7ccee37214607b2",
     "entities": [
       {
         "tableName": "armadi",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "vestiti",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nome` TEXT NOT NULL, `tipo` TEXT NOT NULL, `colore` TEXT NOT NULL, `posizione` TEXT NOT NULL, `armadioId` INTEGER NOT NULL, FOREIGN KEY(`armadioId`) REFERENCES `armadi`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nome` TEXT NOT NULL, `tipo` TEXT NOT NULL, `colore` TEXT NOT NULL, `posizione` TEXT NOT NULL, `armadioId` INTEGER NOT NULL, `photoUri` TEXT, FOREIGN KEY(`armadioId`) REFERENCES `armadi`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -75,6 +75,12 @@
             "columnName": "armadioId",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "photoUri",
+            "columnName": "photoUri",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -112,7 +118,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '96ae54569c80b4e2584bb9280b06a77a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f6b495c6d1e3e40fd7ccee37214607b2')"
     ]
   }
 }

@@ -1,5 +1,6 @@
 package com.valcan.i_find.ui.vestito
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.valcan.i_find.data.model.Vestito
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,21 +52,24 @@ class VestitoViewModel @Inject constructor(
 
     fun loadVestitiByArmadio(armadioId: Long) {
         viewModelScope.launch {
-            repository.getVestitiByArmadio(armadioId)
-                .catch { e ->
-                    _uiState.update { it.copy(error = e.message) }
-                }
-                .collect { vestiti ->
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            vestitiByArmadio = currentState.vestitiByArmadio + (armadioId to vestiti)
-                        )
-                    }
-                }
+            val vestiti = if (armadioId == -1L) {
+                repository.getAllVestiti().first()
+            } else {
+                repository.getVestitiByArmadio(armadioId).first()
+            }
+            Log.d("VestitoViewModel", "vestiti caricati: $vestiti")
+            _uiState.update { it.copy(vestiti = vestiti) }
         }
     }
 
-    fun addVestito(nome: String, tipo: String, colore: String, posizione: String, armadioId: Long) {
+    fun addVestito(
+        nome: String,
+        tipo: String,
+        colore: String,
+        posizione: String,
+        armadioId: Long,
+        photoUri: String? = null
+    ) {
         viewModelScope.launch {
             try {
                 val vestito = Vestito(

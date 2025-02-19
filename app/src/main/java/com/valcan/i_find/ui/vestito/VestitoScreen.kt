@@ -16,6 +16,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.valcan.i_find.data.model.Vestito
 import com.valcan.i_find.data.model.Armadio
 import com.valcan.i_find.ui.armadio.ArmadioViewModel
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.filled.CameraAlt
+import coil.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,15 +106,15 @@ fun VestitoScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(filteredVestiti) { vestito ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
@@ -127,6 +133,16 @@ fun VestitoScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                        if (vestito.photoUri != null) {
+                            Image(
+                                painter = rememberAsyncImagePainter(vestito.photoUri),
+                                contentDescription = "Thumbnail",
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 }
             }
@@ -137,8 +153,8 @@ fun VestitoScreen(
         AddVestitoDialog(
             armadi = armadioState.armadi,
             onDismiss = { showAddDialog = false },
-            onConfirm = { nome, tipo, colore, posizione, selectedArmadioId ->
-                viewModel.addVestito(nome, tipo, colore, posizione, selectedArmadioId)
+            onConfirm = { nome, tipo, colore, posizione, selectedArmadioId, photoUri ->
+                viewModel.addVestito(nome, tipo, colore, posizione, selectedArmadioId, photoUri)
                 showAddDialog = false
             }
         )

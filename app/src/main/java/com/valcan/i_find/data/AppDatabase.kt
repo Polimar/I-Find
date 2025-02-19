@@ -12,7 +12,7 @@ import com.valcan.i_find.data.model.Vestito
 @Database(
     entities = [Armadio::class, Vestito::class],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun armadioDao(): ArmadioDao
@@ -27,8 +27,10 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "i_find_database"
-                ).build()
+                    "app_database"
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

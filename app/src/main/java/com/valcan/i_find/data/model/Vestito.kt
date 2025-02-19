@@ -24,5 +24,6 @@ data class Vestito(
     val tipo: String,
     val colore: String,
     val posizione: String,
-    val armadioId: Long
+    val armadioId: Long,
+    val photoUri: String? = null
 ) 
