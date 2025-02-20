@@ -77,7 +77,8 @@ class VestitoViewModel @Inject constructor(
                     tipo = tipo,
                     colore = colore,
                     posizione = posizione,
-                    armadioId = armadioId
+                    armadioId = armadioId,
+                    photoUri = photoUri
                 )
                 repository.insertVestito(vestito)
             } catch (e: Exception) {

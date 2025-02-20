@@ -2,10 +2,11 @@ package com.valcan.i_find.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Nuova palette pastello blu-celeste
+val PastelPrimary = Color(0xFF90CAF9)      // Azzurro pastello principale
+val PastelSecondary = Color(0xFFBBDEFB)    // Celeste pastello secondario
+val PastelBackground = Color(0xFFE3F2FD)    // Sfondo azzurro molto chiaro
+val PastelSurface = Color(0xFFE1F5FE)      // Superficie celeste chiaro
+val PastelError = Color(0xFFEF9A9A)        // Rosa pastello per errori
+val PastelAccent = Color(0xFF64B5F6)       // Azzurro pastello accent
+val PastelText = Color(0xFF1976D2)         // Blu scuro per il testo

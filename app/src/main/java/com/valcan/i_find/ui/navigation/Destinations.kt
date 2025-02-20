@@ -1,12 +1,14 @@
 package com.valcan.i_find.ui.navigation
 
 sealed class Destinations(val route: String) {
-    object ArmadioList : Destinations("armadioList")
-    object VestitoList : Destinations("vestitoList/{armadioId}") {
-        fun createRoute(armadioId: Long) = "vestitoList/$armadioId"
-    }
-    object AddArmadio : Destinations("addArmadio")
-    object AddVestito : Destinations("addVestito/{armadioId}") {
-        fun createRoute(armadioId: Long) = "addVestito/$armadioId"
+    object Home : Destinations("home")
+    object Vestiti : Destinations("vestiti")
+    object Armadi : Destinations("armadi")
+    object Search : Destinations("search")
+    object Settings : Destinations("settings")
+    
+    // Per la navigazione ai vestiti di un armadio specifico
+    object VestitiInArmadio : Destinations("vestiti/{armadioId}") {
+        fun createRoute(armadioId: Long) = "vestiti/$armadioId"
     }
 } 

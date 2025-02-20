@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Weekend
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,54 +22,41 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun HomePage(
-    onNavigateToAddVestiti: () -> Unit,
-    onNavigateToAddArmadi: () -> Unit,
+    onNavigateToVestiti: () -> Unit,
+    onNavigateToArmadi: () -> Unit,
     onNavigateToSearch: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    userName: String = "Nome Utente"
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { 
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            "I Find",
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
-        ) {
-            Text(
-                "Cosa mi metto oggi?",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            
-            GridMenu(
-                onNavigateToAddVestiti = onNavigateToAddVestiti,
-                onNavigateToAddArmadi = onNavigateToAddArmadi,
-                onNavigateToSearch = onNavigateToSearch,
-                onNavigateToSettings = onNavigateToSettings
-            )
-        }
+    // Usa colori definiti o sostituiti
+    val primaryColor = Color(0xFF90CAF9)
+    val secondaryColor = Color(0xFFBBDEFB)
+    val backgroundColor = Color(0xFFE3F2FD)
+    val surfaceColor = Color(0xFFE1F5FE)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Cosa mi metto oggi?",
+            style = MaterialTheme.typography.headlineLarge,
+            color = primaryColor,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // Grid menu per le azioni principali
+        GridMenu(
+            onNavigateToAddVestiti = onNavigateToVestiti,
+            onNavigateToAddArmadi = onNavigateToArmadi,
+            onNavigateToSearch = onNavigateToSearch,
+            onNavigateToSettings = onNavigateToSettings
+        )
     }
 }
 
@@ -85,14 +75,14 @@ private fun GridMenu(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             HomeIconButton(
-                icon = Icons.Default.Add,
+                icon = Icons.Filled.Add,
                 label = "Aggiungi\nVestiti",
                 onClick = onNavigateToAddVestiti,
                 modifier = Modifier.weight(1f),
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             )
             HomeIconButton(
-                icon = Icons.Default.Add,
+                icon = Icons.Filled.Add,
                 label = "Aggiungi\nArmadi",
                 onClick = onNavigateToAddArmadi,
                 modifier = Modifier.weight(1f),
@@ -105,14 +95,14 @@ private fun GridMenu(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             HomeIconButton(
-                icon = Icons.Default.Search,
+                icon = Icons.Filled.Search,
                 label = "Cerca",
                 onClick = onNavigateToSearch,
                 modifier = Modifier.weight(1f),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer
             )
             HomeIconButton(
-                icon = Icons.Default.Settings,
+                icon = Icons.Filled.Settings,
                 label = "Impostazioni",
                 onClick = onNavigateToSettings,
                 modifier = Modifier.weight(1f),
